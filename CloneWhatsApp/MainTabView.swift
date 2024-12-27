@@ -37,7 +37,7 @@ struct MainTabView: View {
                 Image(systemName: Tab.chats.icon)
                 Text(Tab.chats.title)
             }
-            placeholderItemView("Settings")
+            SettingsTabScreen()
                 .tabItem
             {
                 Image(systemName: Tab.settings.icon)
