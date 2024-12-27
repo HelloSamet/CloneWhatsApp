@@ -10,6 +10,9 @@ import SwiftUI
 struct MainTabView: View {
     init() {
         makeTabBarOpaque()
+        let thumpImage = UIImage(systemName: "circle.fill")
+        UISlider.appearance()
+            .setThumbImage(thumpImage, for: .normal)
     }
     var body: some View {
         TabView {

@@ -8,14 +8,14 @@
 import SwiftUI
 
 struct MessageListView: UIViewControllerRepresentable {
-    typealias UIViewControllerType = MessageListContreller
+    typealias UIViewControllerType = MessageListController
     
-    func makeUIViewController(context: Context) -> MessageListContreller {
-        let messageListController = MessageListContreller()
+    func makeUIViewController(context: Context) -> MessageListController {
+        let messageListController = MessageListController()
         return messageListController
     }
     
-    func updateUIViewController(_ uiViewController: MessageListContreller, context: Context) {
+    func updateUIViewController(_ uiViewController: MessageListController, context: Context) {
         
     }
    
