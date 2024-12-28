@@ -22,6 +22,7 @@ struct AuthTextField: View {
                 
             default:
                 TextField(type.placeholder, text: $text)
+                    .keyboardType(type.keyboardType)
             }
             
         }.foregroundStyle(Color.white)
