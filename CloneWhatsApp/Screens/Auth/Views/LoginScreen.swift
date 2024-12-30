@@ -20,7 +20,9 @@ struct LoginScreen: View {
                 forgotPasswordButton()
                 
                 AuthButton(title: "Log in now", onTap: {
-                    
+                    Task{
+                        await authScreenModel.handleLogin()
+                    }
                 }).disabled(authScreenModel.disableLoginButton)
                 
                 Spacer()
