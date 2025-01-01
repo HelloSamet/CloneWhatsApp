@@ -126,3 +126,11 @@ extension AuthManager {
 }
 
 
+extension AuthManager {
+    
+    static let testAccounts: [String] = {
+        (1...50).map { "Qauser\($0)@test.com" }
+    }()
+
+    
+}

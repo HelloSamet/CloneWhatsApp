@@ -26,7 +26,9 @@ struct NewGroupSetupScreen: View {
                     viewModel.handleItemSelection(user)
                 })
             } header: {
-                Text("Participants: \(viewModel.selectedChatPartners.count) Of \(ChannelConstans.maxGroupParticipants)")
+                let count = viewModel.selectedChatPartners.count
+                let maxCount = ChannelConstans.maxGroupParticipants
+                Text("Participants: \(count) Of \(maxCount)")
                     .bold()
             }.listRowBackground(Color.clear)
         }
@@ -36,16 +38,32 @@ struct NewGroupSetupScreen: View {
         }
     }
     
+}
+
+extension NewGroupSetupScreen {
+    
     private func channelSetUpHeaderView() -> some View {
         HStack{
-            Circle().frame(width: 60, height: 60)
+            profileImageView()
             
             TextField("", text: $channelName, prompt: Text("Group Name (optional)"), axis: .vertical)
         }
     }
-}
-
-extension NewGroupSetupScreen {
+    
+    private func profileImageView() -> some View {
+        Button(action: {
+            
+        }, label: {
+            ZStack{
+                Image(systemName: "camera")
+                    .imageScale(.large)
+                    
+            }.frame(width: 60, height: 60)
+                .background(Color(.systemGray5))
+                .clipShape(Circle())
+        })
+    }
+    
     @ToolbarContentBuilder
     private func trailingNavItem() -> some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing){

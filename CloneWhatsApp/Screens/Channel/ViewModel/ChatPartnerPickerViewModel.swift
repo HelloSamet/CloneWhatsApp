@@ -16,10 +16,12 @@ enum ChannelConstans {
     static let maxGroupParticipants = 12
 }
 
+@MainActor
 final class ChatPartnerPickerViewModel: ObservableObject {
     @Published var navStack = [ChannelCreationRoute]()
     @Published var selectedChatPartners = [UserItem]()
-    
+    @Published private(set) var users = [UserItem]()
+    private var lastCursor: String?
     var showSelectedUsers: Bool {
         return !selectedChatPartners.isEmpty
     }
@@ -28,9 +30,28 @@ final class ChatPartnerPickerViewModel: ObservableObject {
         return selectedChatPartners.isEmpty
     }
     
+    var isPaginatable: Bool {
+        return !users.isEmpty
+    }
+    
+    init() {
+        Task{
+            await fetchUsers()
+        }
+    }
+    
     
     // MARK: Public Methods
-    
+    func fetchUsers() async {
+        do {
+            let userNode = try await UserService.paginateUsers(lastCursor: lastCursor, pageSize: 5)
+            self.users.append(contentsOf: userNode.users)
+            self.lastCursor = userNode.currenCursor
+            print("lastCursor: \(lastCursor) \(users.count)")
+        } catch {
+            print("💾 Failed to fetch isers in ChatPartnerPickerViewModel")
+        }
+    }
     func handleItemSelection(_ item: UserItem) {
         if isUserSelected(item)
         {
