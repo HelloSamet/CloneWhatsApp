@@ -8,33 +8,27 @@
 import SwiftUI
 
 struct ChatPartnerPickerScreen: View {
-    @Environment(\.dismiss) private var dissmis
-    @State private var searchText: String = ""
+    @State private var searchText = ""
+    @Environment(\.dismiss) private var dismiss
     @StateObject private var viewModel = ChatPartnerPickerViewModel()
     
     var onCreate: (_ newChannel: ChannelItem) -> Void
+    
     var body: some View {
-        NavigationStack(path: $viewModel.navStack){
-            List{
+        NavigationStack(path: $viewModel.navStack) {
+            List {
                 ForEach(ChatPartnerPickerOption.allCases) { item in
-                    HeaderItemView(item: item, onTapHandler: {
+                    HeaderItemView(item: item) {
                         guard item == ChatPartnerPickerOption.newGroup else { return }
                         viewModel.navStack.append(.groupPartnerPicker)
-                    })
+                    }
                 }
                 
-                Section{
+                Section {
                     ForEach(viewModel.users) { user in
                         ChatPartnerRowView(user: user)
                             .onTapGesture {
-                                viewModel.selectedChatPartners.append(user)
-                                let createChannel = viewModel.createChannel(nil)
-                                switch createChannel {
-                                case .success(let channelItem):
-                                    onCreate(channelItem)
-                                case .failure(let failure):
-                                    print("Failed to create channel \(failure)")
-                                }
+                                viewModel.createDirectChannel(user, completion: onCreate)
                             }
                     }
                 } header: {
@@ -43,7 +37,7 @@ struct ChatPartnerPickerScreen: View {
                         .bold()
                 }
                 
-                if  viewModel.isPaginatable {
+                if viewModel.isPaginatable {
                     loadMoreUsersView()
                 }
             }
@@ -60,7 +54,9 @@ struct ChatPartnerPickerScreen: View {
             .toolbar {
                 trailingNavItem()
             }
-            
+            .onAppear {
+                viewModel.deSelectAllChatPartners()
+            }
         }
     }
     
@@ -81,7 +77,7 @@ extension ChatPartnerPickerScreen {
         case .groupPartnerPicker:
             GroupPartnerPickerScreen(viewModel: viewModel)
         case .setUpGroupChat:
-            NewGroupSetupScreen(viewModel: viewModel)
+            NewGroupSetupScreen(viewModel: viewModel, onCreate: onCreate)
         }
     }
 }
@@ -89,23 +85,23 @@ extension ChatPartnerPickerScreen {
 extension ChatPartnerPickerScreen {
     @ToolbarContentBuilder
     private func trailingNavItem() -> some ToolbarContent {
-        ToolbarItem(placement: .topBarTrailing){
+        ToolbarItem(placement: .topBarTrailing) {
             cancelButton()
         }
     }
     
     private func cancelButton() -> some View {
-        Button(action: {
-            dissmis()
-        }, label: {
+        Button {
+            dismiss()
+        } label: {
             Image(systemName: "xmark")
                 .font(.footnote)
                 .bold()
-                .foregroundStyle(Color.gray)
+                .foregroundStyle(.gray)
                 .padding(8)
                 .background(Color(.systemGray5))
                 .clipShape(Circle())
-        })
+        }
     }
 }
 
@@ -113,16 +109,17 @@ extension ChatPartnerPickerScreen {
     private struct HeaderItemView: View {
         let item: ChatPartnerPickerOption
         let onTapHandler: () -> Void
+        
         var body: some View {
-            Button(action: {
+            Button {
                 onTapHandler()
-            }, label: {
+            } label: {
                 buttonBody()
-            })
+            }
         }
         
         private func buttonBody() -> some View {
-            HStack{
+            HStack {
                 Image(systemName: item.imageName)
                     .font(.footnote)
                     .frame(width: 40, height: 40)
@@ -160,9 +157,9 @@ enum ChatPartnerPickerOption: String, CaseIterable, Identifiable {
     }
 }
 
-
 #Preview {
-    ChatPartnerPickerScreen(onCreate: { channel in
+    ChatPartnerPickerScreen { channel in
         
-    })
+    }
 }
+

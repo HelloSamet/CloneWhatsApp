@@ -9,28 +9,29 @@ import SwiftUI
 
 struct ChatRoomScreen: View {
     let channel: ChannelItem
+    
     var body: some View {
         MessageListView()
-        .toolbarVisibility(.hidden, for: .tabBar)
-        .toolbar {
-            leadingNavItems()
-            trailingNavItems()
-        }
-        .navigationBarTitleDisplayMode(.inline)
-        .safeAreaInset(edge: .bottom, content: {
-            TextInputArea()
-        })
+            .toolbar(.hidden, for: .tabBar)
+            .toolbar {
+                leadingNavItems()
+                trailingNavItems()
+            }
+            .navigationBarTitleDisplayMode(.inline)
+            .safeAreaInset(edge: .bottom) {
+                TextInputArea()
+            }
     }
 }
 
+// MARK: Toolbar Items
 extension ChatRoomScreen {
-    
     @ToolbarContentBuilder
     private func leadingNavItems() -> some ToolbarContent {
         ToolbarItem(placement: .topBarLeading) {
-            HStack{
+            HStack {
                 Circle()
-                    .frame(width: 35, height: 35)
+                    .frame(width: 35, height: 30)
                 
                 Text(channel.title)
                     .bold()
@@ -41,23 +42,24 @@ extension ChatRoomScreen {
     @ToolbarContentBuilder
     private func trailingNavItems() -> some ToolbarContent {
         ToolbarItemGroup(placement: .topBarTrailing) {
-            Button(action: {
+            Button {
                 
-            }, label: {
+            } label: {
                 Image(systemName: "video")
-            })
+            }
             
-            Button(action: {
+            Button {
                 
-            }, label: {
+            } label: {
                 Image(systemName: "phone")
-            })
+            }
         }
     }
 }
 
 #Preview {
-    NavigationStack{
+    NavigationStack {
         ChatRoomScreen(channel: .placeHolder)
     }
 }
+

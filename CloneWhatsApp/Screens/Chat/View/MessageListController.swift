@@ -76,10 +76,6 @@ extension MessageListController: UITableViewDelegate, UITableViewDataSource {
     }
 }
 
-
-#Preview{
+#Preview {
     MessageListView()
-        .frame(maxWidth: .infinity)
-        .padding(.horizontal)
-        .background(Color.gray.opacity(0.1))
 }

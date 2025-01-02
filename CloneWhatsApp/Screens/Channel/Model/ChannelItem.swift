@@ -14,11 +14,12 @@ struct ChannelItem: Identifiable {
     var lastMessage: String
     var creationDate: Date
     var lastMessageTimeStamp: Date
-    var membersCount: UInt
+    var membersCount: Int
     var adminUids: [String]
     var membersUids: [String]
     var thumbnailUrl: String?
     var members: [UserItem]
+    let createdBy: String
     
     var isGroupChat: Bool {
         return membersCount > 2
@@ -35,13 +36,27 @@ struct ChannelItem: Identifiable {
         }
         
         if isGroupChat {
-            return "Group Chat"
+            return groupMembersNames
         } else {
             return membersExcludingMe.first?.username ?? "Unknown"
         }
     }
     
-    static let placeHolder = ChannelItem(id: "1", lastMessage: "Hello World", creationDate: Date(), lastMessageTimeStamp: Date(), membersCount: 2, adminUids: [], membersUids: [], members: [])
+    private var groupMembersNames: String {
+        let membersCount = membersExcludingMe.count
+        let fullnames: [String] = membersExcludingMe.map { $0.username }
+        
+        if membersCount == 2 {
+            return fullnames.joined(separator: " and ")
+        } else if membersCount > 2 {
+            let remainingCount = membersCount - 2
+            return fullnames.prefix(2).joined(separator: ", ") + ", and \(remainingCount) " + "others"
+        }
+        
+        return "Unknown"
+    }
+    
+    static let placeHolder = ChannelItem(id: "1", lastMessage: "Hello World", creationDate: Date(), lastMessageTimeStamp: Date(), membersCount: 2, adminUids: [], membersUids: [], members: [], createdBy: "")
 }
 
 extension ChannelItem {
@@ -53,11 +68,12 @@ extension ChannelItem {
         self.creationDate = Date(timeIntervalSince1970: creationInterval)
         let lastMsgTimeStampInterval = dict[.lastMessageTimeStamp] as? Double ?? 0
         self.lastMessageTimeStamp = Date(timeIntervalSince1970: lastMsgTimeStampInterval)
-        self.membersCount = dict[.membersCount] as? UInt ?? 0
+        self.membersCount = dict[.membersCount] as? Int ?? 0
         self.adminUids = dict[.adminUids] as? [String] ?? []
         self.thumbnailUrl = dict[.thumbnailUrl] as? String ?? nil
         self.membersUids = dict[.membersUids] as? [String] ?? []
         self.members = dict[.members] as? [UserItem] ?? []
+        self.createdBy = dict[.createdBy] as? String ?? ""
     }
 }
 
@@ -71,7 +87,8 @@ extension String {
     static let membersCount = "membersCount"
     static let adminUids = "adminUids"
     static let membersUids = "membersUids"
-    static let members = "members"
     static let thumbnailUrl = "thumbnailUrl"
+    static let members = "members"
+    static let createdBy = "createdBy"
 }
 

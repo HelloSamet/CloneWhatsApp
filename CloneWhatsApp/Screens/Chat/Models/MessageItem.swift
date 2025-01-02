@@ -37,14 +37,8 @@ struct MessageItem: Identifiable {
     ]
 }
 
-enum MessageType {
-    case text, photo, video, audio
-}
-
-enum MessageDirection {
-    case sent, recived
-    
-    static var random: MessageDirection {
-        return [MessageDirection.sent, .recived].randomElement() ?? .sent
-    }
+extension String {
+    static let `type` = "type"
+    static let timeStampt = "timeStampt"
+    static let ownerUid = "ownerUid"
 }
