@@ -40,6 +40,10 @@ final class ChatPartnerPickerViewModel: ObservableObject {
         return !users.isEmpty
     }
     
+    private var isDirectChannel: Bool {
+        return selectedChatPartners.count == 1
+    }
+    
     init() {
         Task{
             await fetchUsers()
@@ -119,11 +123,16 @@ final class ChatPartnerPickerViewModel: ObservableObject {
         
         membersUids.forEach { userId in
             FirebaseConstants.UserChannelsRef.child(userId).child(channelId).setValue(true)
-            
-            FirebaseConstants.UserDirectChannels.child(userId).child(channelId).setValue(true)
         }
         
-        let newChannelItem = ChannelItem(channelDict)
+        if isDirectChannel {
+            let chartPartner = selectedChatPartners[0]
+            FirebaseConstants.UserDirectChannels.child(currentUid).child(chartPartner.uid).setValue([channelId: true])
+            FirebaseConstants.UserDirectChannels.child(chartPartner.uid).child(currentUid).setValue([channelId: true])
+        }
+        
+        var newChannelItem = ChannelItem(channelDict)
+        newChannelItem.members = selectedChatPartners
         return .success(newChannelItem)
     }
 }
