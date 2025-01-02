@@ -73,4 +73,8 @@ final class ChatPartnerPickerViewModel: ObservableObject {
         let isSelected = selectedChatPartners.contains{ $0.uid == user.uid }
         return isSelected
     }
+    
+    func buildDirectChatRoom() async -> Result<ChannelItem, Error> {
+        
+    }
 }
