@@ -14,12 +14,14 @@ struct MessageItem: Identifiable {
     let text: String
     let type: MessageType
     let ownerUid: String
+    let timeStampt: Date
+    
     var direction: MessageDirection {
         return ownerUid == Auth.auth().currentUser?.uid ? .sent : .recived
     }
     
-    static let sentPlaceHolder = MessageItem(id: UUID().uuidString, text: "Holy Spagetti", type: .text, ownerUid: "1")
-    static let recivedPlaceHolder = MessageItem(id: UUID().uuidString, text: "Hey dude whats up", type: .text, ownerUid: "2")
+    static let sentPlaceHolder = MessageItem(id: UUID().uuidString, text: "Holy Spagetti", type: .text, ownerUid: "1", timeStampt: Date())
+    static let recivedPlaceHolder = MessageItem(id: UUID().uuidString, text: "Hey dude whats up", type: .text, ownerUid: "2", timeStampt: Date())
     
     var alignment: Alignment {
         return direction == .recived ? .leading : .trailing
@@ -34,10 +36,10 @@ struct MessageItem: Identifiable {
     }
     
     static let stubMessage: [MessageItem] = [
-        MessageItem(id: UUID().uuidString, text: "Hi there", type: .text, ownerUid: "3"),
-        MessageItem(id: UUID().uuidString,text: "Check out this photo", type: .photo, ownerUid: "4"),
-        MessageItem(id: UUID().uuidString,text: "Play out this video", type: .video, ownerUid: "5"),
-        MessageItem(id: UUID().uuidString,text: "", type: .audio, ownerUid: "6")
+        MessageItem(id: UUID().uuidString, text: "Hi there", type: .text, ownerUid: "3", timeStampt: Date()),
+        MessageItem(id: UUID().uuidString,text: "Check out this photo", type: .photo, ownerUid: "4", timeStampt: Date()),
+        MessageItem(id: UUID().uuidString,text: "Play out this video", type: .video, ownerUid: "5", timeStampt: Date()),
+        MessageItem(id: UUID().uuidString,text: "", type: .audio, ownerUid: "6", timeStampt: Date())
     ]
 }
 
@@ -46,8 +48,10 @@ extension MessageItem {
         self.id = id
         self.text = dict[.text] as? String ?? ""
         let type = dict[.type] as? String ?? "text"
-        self.type = MessageType(type)
+        self.type = MessageType(type) ?? .text
         self.ownerUid = dict[.ownerUid] as? String ?? ""
+        let timeInterval = dict[.timeStampt] as? TimeInterval ?? 0
+        self.timeStampt = Date(timeIntervalSince1970: timeInterval)
     }
 }
 

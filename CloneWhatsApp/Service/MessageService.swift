@@ -38,7 +38,10 @@ struct MessageService {
                 let messageDict = value as? [String: Any] ?? [:]
                 let message = MessageItem(id: key, dict: messageDict)
                 messages.append(message)
-                completion(messages)
+                if messages.count == snapshot.childrenCount {
+                    messages.sort { $0.timeStampt < $1.timeStampt }
+                    completion(messages)
+                }
                 print("messageDict: \(messageDict)")
             }
         } withCancel: { error in
