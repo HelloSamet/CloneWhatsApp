@@ -10,10 +10,13 @@ import FirebaseAuth
 
 final class ChannelTabViewModel: ObservableObject {
     
+    
     @Published var navigateToChatRoom = false
     @Published var newChannel: ChannelItem?
     @Published var showChatPartnerPickerView = false
     @Published var channels = [ChannelItem]()
+    typealias ChannelId = String
+    @Published var channelDictionary: [ChannelId: ChannelItem] = [:]
     
     init() {
         fetchCurrentUserChannels()
@@ -45,7 +48,9 @@ final class ChannelTabViewModel: ObservableObject {
             channel.members = []
             self?.getChannelMembers(channel, completion: { members in
                 channel.members = members
-                self?.channels.append(channel)
+                self?.channelDictionary[channelId] = channel
+                self?.reloadData()
+               // self?.channels.append(channel)
                 print("channel: \(channel.title)")
             })
         } withCancel: { error in
@@ -54,8 +59,15 @@ final class ChannelTabViewModel: ObservableObject {
     }
     
     private func getChannelMembers(_ channel: ChannelItem, completion: @escaping (_ members: [UserItem]) -> Void) {
-        UserService.getUsers(with: channel.membersUids, completion: { userNode in
+        guard let currentUid = Auth.auth().currentUser?.uid else { return }
+        let channelMemmbersUids = Array(channel.membersUids.filter { $0 != currentUid }.prefix(2))
+        UserService.getUsers(with: channelMemmbersUids, completion: { userNode in
             completion(userNode.users)
         })
+    }
+    
+    private func reloadData() {
+        self.channels = Array(channelDictionary.values)
+        self.channels.sort { $0.lastMessageTimeStamp > $1.lastMessageTimeStamp }
     }
 }
