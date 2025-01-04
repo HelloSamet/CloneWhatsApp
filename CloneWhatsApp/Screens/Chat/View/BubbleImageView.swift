@@ -10,24 +10,26 @@ import SwiftUI
 struct BubbleImageView: View {
     let item: MessageItem
     var body: some View {
-        HStack{
+        HStack(alignment: .bottom, spacing: 5){
             if item.direction == .sent { Spacer() }
             
-            HStack{
-                if item.direction == .sent { shareButton() }
-                
-                messageTextView()
-                    .shadow(color: Color(.systemGray3).opacity(0.1), radius: 5, x: 0, y: 20)
-                    .overlay(
-                        playButton()
-                            .opacity(item.type == .video ? 1 : 0)
-                    )
-                
-                if item.direction == .recived { shareButton() }
+            if item.showGroupPartnerInfo {
+                CircularProfileImageView(item.sender?.profileImageUrl, size: .mini)
+                    .offset(y: 5)
             }
+            
+            messageTextView()
+                .shadow(color: Color(.systemGray3).opacity(0.1), radius: 5, x: 0, y: 20)
+                .overlay(
+                    playButton()
+                        .opacity(item.type == .video ? 1 : 0)
+                )
             
             if item.direction == .recived { Spacer() }
         }
+        .frame(maxWidth: .infinity, alignment: item.alignment)
+        .padding(.leading, item.leadingPadding)
+        .padding(.trailing, item.trailingPadding)
     }
     
     private func playButton() -> some View {
@@ -61,11 +63,13 @@ struct BubbleImageView: View {
                     timeStampTextView()
                 }
             
-            Text(item.text)
-                .padding([.horizontal, .bottom], 8)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .frame(width: 220)
-            
+            if !item.text.isEmptyOrWhiteSpace {
+                Text(item.text)
+                    .padding([.horizontal, .bottom], 8)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .frame(width: 220)
+
+            }
         }
         .background(item.backgroundColor)
         .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
