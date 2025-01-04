@@ -17,12 +17,24 @@ struct ChannelItem: Identifiable {
     var membersCount: Int
     var adminUids: [String]
     var membersUids: [String]
-    var thumbnailUrl: String?
+    private let thumbnailUrl: String?
     var members: [UserItem]
     let createdBy: String
     
     var isGroupChat: Bool {
         return membersCount > 2
+    }
+    
+    var coverImageUrl: String? {
+        if let thumbnailUrl = thumbnailUrl {
+            return thumbnailUrl
+        }
+        
+        if isGroupChat == false {
+            return membersExcludingMe.first?.profileImageUrl
+        }
+        
+        return nil
     }
     
     var membersExcludingMe: [UserItem] {
@@ -64,7 +76,7 @@ struct ChannelItem: Identifiable {
         return members.first { $0.uid == createdBy}?.username ?? "Someone"
     }
     
-    static let placeHolder = ChannelItem(id: "1", lastMessage: "Hello World", creationDate: Date(), lastMessageTimeStamp: Date(), membersCount: 2, adminUids: [], membersUids: [], members: [], createdBy: "")
+    static let placeHolder = ChannelItem(id: "1", lastMessage: "Hello World", creationDate: Date(), lastMessageTimeStamp: Date(), membersCount: 2, adminUids: [], membersUids: [], thumbnailUrl: nil, members: [], createdBy: "")
 }
 
 extension ChannelItem {
