@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import PhotosUI
 
 struct ChatRoomScreen: View {
     let channel: ChannelItem
@@ -23,6 +24,10 @@ struct ChatRoomScreen: View {
                 leadingNavItems()
                 trailingNavItems()
             }
+            .photosPicker(isPresented: $viewModel.showPhotoPicker,
+                          selection: $viewModel.photoPickerItems,
+                          maxSelectionCount: 6
+            )
             .navigationBarTitleDisplayMode(.inline)
             .safeAreaInset(edge: .bottom) {
                 bottomSafeAreaView()
@@ -33,11 +38,13 @@ struct ChatRoomScreen: View {
         VStack(spacing: 0) {
             
             Divider()
-            MediaAttachmentPreview()
-            Divider()
+            if viewModel.showPhotoPickerPreview {
+                MediaAttachmentPreview(selectedPhotos: viewModel.selectedPhotos)
+                Divider()
+            }
             
-            TextInputArea(textMessage: $viewModel.textMessage, onSendHandler: {
-                viewModel.sendMessage()
+            TextInputArea(textMessage: $viewModel.textMessage, actionHandler: { action in
+                viewModel.handleTextInputArea(action)
             })
         }
     }
