@@ -16,7 +16,11 @@ struct MediaAttachmentPreview: View {
             HStack{
                 // audioAttachmentPreview()
                 ForEach(mediaAttachments) { attachment in
-                    thumbnailImageView(attachment)
+                    if attachment.type == .audio {
+                        audioAttachmentPreview(attachment)
+                    } else {
+                        thumbnailImageView(attachment)
+                    }
                 }
             }.padding(.horizontal)
         }
