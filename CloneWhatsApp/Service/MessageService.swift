@@ -48,5 +48,16 @@ struct MessageService {
             print("Failed to get messages for \(channel.id)")
         }
     }
-    
+}
+
+struct MessageUploadParams {
+    let channel: ChannelItem
+    let text: String
+    let type: MessageType
+    let attachment: MediaAttachment
+    var thumbnail: String?
+    var videoURL: String?
+    var sender: UserItem
+    var audioURL: String?
+    var audioDuration: TimeInterval?
 }
